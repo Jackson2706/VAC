@@ -23,16 +23,18 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
     """
     model.to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=lr)
+    optimizer = optim.Adam(model.cls.parameters(), lr=lr)
 
     best_acc = 0.0
     best_model_state = None
-
+    torch.cuda.empty_cache()
     for epoch in range(num_epochs):
         # Training phase
+        torch.cuda.empty_cache()
         model.train()
         train_loss, correct, total = 0.0, 0, 0
         for inputs, _ ,labels in train_loader:
+            torch.cuda.empty_cache()
             inputs, labels = inputs.to(device), labels.to(device)
 
             optimizer.zero_grad()
@@ -52,7 +54,9 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
         model.eval()
         val_loss, correct, total = 0.0, 0, 0
         with torch.no_grad():
+            torch.cuda.empty_cache()
             for inputs, _ , labels in val_loader:
+                torch.cuda.empty_cache()
                 inputs, labels = inputs.to(device), labels.to(device)
                 outputs = model(inputs)
                 loss = criterion(outputs, labels)
@@ -99,7 +103,9 @@ def test_cls_model(model, test_loader, device):
     all_preds, all_labels = [], []
 
     with torch.no_grad():
+        torch.cuda.empty_cache()
         for inputs, _, labels in test_loader:
+            torch.cuda.empty_cache()
             inputs, labels = inputs.to(device), labels.to(device)
 
             outputs = model(inputs)  # Shape: [B, num_classes]

@@ -13,19 +13,19 @@ class SapiensCLS(nn.Module):
         self.cls = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),  # Reduces to [B, 1024, 1, 1]
             nn.Flatten(),            # Flattens to [B, 1024]
-            nn.Linear(1024, num_classes)  # Linear layer for classification
+            nn.Linear(1, num_classes)  # Linear layer for classification
         )
 
     def forward(self, x):
         B, T, C, H, W = x.shape
         x = x.view(B*T, C, H, W)
         x = F.interpolate(x, size=(1024, 1024), mode="bilinear", align_corners=False)
-        x = self.encoder(x)
-        x = x.view(B, -1)
+        x = self.encoder(x)[0]
+        x = x.reshape(B, -1)
         x = self.cls(x)
         return x
-
-# Example usage:
-model = SapiensCLS(encoder_weight_path='/home/jackson-devworks/Desktop/VAC/weights/sapiens_0.3b_epoch_1600_torchscript.pt2', num_classes=10)
-output = model(torch.randn(1, 8, 3, 1024, 1024))  # Assuming input image size is [B, 3, 256, 256]
-print(output.shape)
+if __name__ == "__main__":
+    # Example usage:
+    model = SapiensCLS(encoder_weight_path='/home/jackson-devworks/Desktop/VAC/weights/sapiens_0.3b_epoch_1600_torchscript.pt2', num_classes=10)
+    output = model(torch.randn(1, 1, 3, 1024, 1024))  # Assuming input image size is [B, 3, 256, 256]
+    print(output.shape)
