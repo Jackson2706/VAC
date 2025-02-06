@@ -5,9 +5,9 @@ from torchvision.datasets.kinetics import Kinetics
 from config import *
 from model import SapiensCLS
 
-train_dataset = Kinetics(root=DATASET_DIR, frames_per_clip=FRAME_PER_CLIP, split ="val", download=True, num_workers=NUM_WORKER_LOADING)
+train_dataset = Kinetics(root=DATASET_DIR, frames_per_clip=FRAME_PER_CLIP, split ="train", download=True, num_workers=NUM_WORKER_LOADING)
 val_dataset = Kinetics(root=DATASET_DIR, frames_per_clip=FRAME_PER_CLIP, split ="val", download=True, num_workers=NUM_WORKER_LOADING)
-test_dataset = Kinetics(root=DATASET_DIR, frames_per_clip=FRAME_PER_CLIP, split ="val", download=True, num_workers=NUM_WORKER_LOADING)
+test_dataset = Kinetics(root=DATASET_DIR, frames_per_clip=FRAME_PER_CLIP, split ="test", download=True, num_workers=NUM_WORKER_LOADING)
 
 train_loader = DataLoader(train_dataset, batch_size=TRAIN_BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=VAL_BATCH_SIZE, shuffle=False)
