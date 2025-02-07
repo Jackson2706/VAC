@@ -33,8 +33,10 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
         torch.cuda.empty_cache()
         model.train()
         train_loss, correct, total = 0.0, 0, 0
-        for inputs, _ ,labels in train_loader:
+        for inputs, _, labels in train_loader:
             torch.cuda.empty_cache()
+
+            inputs = inputs.float()
             inputs, labels = inputs.to(device), labels.to(device)
 
             optimizer.zero_grad()
@@ -55,8 +57,10 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
         val_loss, correct, total = 0.0, 0, 0
         with torch.no_grad():
             torch.cuda.empty_cache()
-            for inputs, _ , labels in val_loader:
+            for inputs, _, labels in val_loader:
                 torch.cuda.empty_cache()
+
+                inputs = inputs.float()
                 inputs, labels = inputs.to(device), labels.to(device)
                 outputs = model(inputs)
                 loss = criterion(outputs, labels)
@@ -106,6 +110,8 @@ def test_cls_model(model, test_loader, device):
         torch.cuda.empty_cache()
         for inputs, _, labels in test_loader:
             torch.cuda.empty_cache()
+            
+            inputs = inputs.float()
             inputs, labels = inputs.to(device), labels.to(device)
 
             outputs = model(inputs)  # Shape: [B, num_classes]

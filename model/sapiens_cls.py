@@ -19,9 +19,9 @@ class SapiensCLS(nn.Module):
     def forward(self, x):
         B, T, C, H, W = x.shape
         x = x.view(B*T, C, H, W)
-        x = F.interpolate(x, size=(1024, 1024), mode="bilinear", align_corners=False)
         x = self.encoder(x)[0]
         x = x.reshape(B, -1)
+        # print(x.shape)
         x = self.cls(x)
         return x
 if __name__ == "__main__":
