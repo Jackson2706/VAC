@@ -47,4 +47,4 @@ model = DINO_CLS(num_classes=NUM_CLS)
 best_model = train_cls_model(model, train_loader, val_loader, num_epochs=NUM_EPOCH, lr=LR, device=DEVICE)
 
 # Kiểm tra mô hình trên tập test
-test_result = test_cls_model(model, test_loader, device=DEVICE)
+test_result = test_cls_model(best_model, test_loader, device=DEVICE)

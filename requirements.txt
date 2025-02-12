@@ -3,3 +3,7 @@ tqdm
 torch
 torchvision
 pyav
+einops
+fvcore
+mmpretrain
+mmcv
