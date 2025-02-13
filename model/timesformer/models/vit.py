@@ -440,7 +440,7 @@ class MotionPatchEmbed(nn.Module):
 
 
 import argparse
-from timesformer.models.moose import MOOSE_Encoder, CustomAttentionWithResidual
+from model.timesformer.models.moose import MOOSE_Encoder, CustomAttentionWithResidual
 # from 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', help="restore checkpoint")
