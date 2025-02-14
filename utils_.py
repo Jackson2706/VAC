@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from sklearn.metrics import f1_score
 from torch.utils.data import DataLoader
-
+from tqdm import tqdm
 
 def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
     """
@@ -28,7 +28,7 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
     best_acc = 0.0
     best_model_state = None
     torch.cuda.empty_cache()
-    for epoch in range(num_epochs):
+    for epoch in tqdm(range(num_epochs)):
         # Training phase
         torch.cuda.empty_cache()
         model.train()
@@ -108,7 +108,7 @@ def test_cls_model(model, test_loader, device):
 
     with torch.no_grad():
         torch.cuda.empty_cache()
-        for inputs, _, labels in test_loader:
+        for inputs, _, labels in tqdm(test_loader):
             torch.cuda.empty_cache()
             
             inputs = inputs.float()
