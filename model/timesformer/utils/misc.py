@@ -80,7 +80,7 @@ def _get_model_analysis_input(cfg, use_train_input):
         used for analyzing the model (counting flops and activations etc.).
     Args:
         cfg (CfgNode): configs. Details can be found in
-            lib/config/defaults.py
+            lib/configs/defaults.py
         use_train_input (bool): if True, return the input for training. Otherwise,
             return the input for testing.
 
@@ -125,11 +125,11 @@ def _get_model_analysis_input(cfg, use_train_input):
 
 def get_model_stats(model, cfg, mode, use_train_input):
     """
-    Compute statistics for the current model given the config.
+    Compute statistics for the current model given the configs.
     Args:
         model (model): model to perform analysis.
         cfg (CfgNode): configs. Details can be found in
-            lib/config/defaults.py
+            lib/configs/defaults.py
         mode (str): Options include `flop` or `activation`. Compute either flop
             (gflops) or activation count (mega).
         use_train_input (bool): if True, compute statistics for training. Otherwise,
@@ -165,7 +165,7 @@ def log_model_info(model, cfg, use_train_input=True):
     Args:
         model (model): model to log the info.
         cfg (CfgNode): configs. Details can be found in
-            lib/config/defaults.py
+            lib/configs/defaults.py
         use_train_input (bool): if True, log info for training. Otherwise,
             log info for testing.
     """
@@ -191,7 +191,7 @@ def is_eval_epoch(cfg, cur_epoch, multigrid_schedule):
     Determine if the model should be evaluated at the current epoch.
     Args:
         cfg (CfgNode): configs. Details can be found in
-            lib/config/defaults.py
+            lib/configs/defaults.py
         cur_epoch (int): current epoch.
         multigrid_schedule (List): schedule for multigrid training.
     """
@@ -274,7 +274,7 @@ def launch_job(cfg, init_method, func, daemon=False):
     Run 'func' on one or more GPUs, specified in cfg
     Args:
         cfg (CfgNode): configs. Details can be found in
-            lib/config/defaults.py
+            lib/configs/defaults.py
         init_method (str): initialization method to launch the job with multiple
             devices.
         func (function): job to run on GPU(s)

@@ -5,8 +5,44 @@ import torch.optim as optim
 from sklearn.metrics import f1_score
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from configs import  get_cfg
+from _utils import checkpoint as cu
+import torch_xla.core.xla_model as xm
 
-def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
+
+def load_config(args = None, cfg_file = "/data2/hongn/TimeSformer/configs/Rtmri75s/simple_cfg.yaml"):
+    """
+    Given the arguemnts, load and initialize the configs.
+    Args:
+        args (argument): arguments includes `shard_id`, `num_shards`,
+            `init_method`, `cfg_file`, and `opts`.
+    """
+    # Setup cfg.
+    cfg = get_cfg()
+    if(args is not None):
+        # Load configs from cfg
+        if args.cfg_file is not None:
+            cfg.merge_from_file(args.cfg_file)
+        # Load configs from command line, overwrite configs from opts.
+        if args.opts is not None:
+            cfg.merge_from_list(args.opts)
+
+        # Inherit parameters from args.
+        if hasattr(args, "num_shards") and hasattr(args, "shard_id"):
+            cfg.NUM_SHARDS = args.num_shards
+            cfg.SHARD_ID = args.shard_id
+        if hasattr(args, "rng_seed"):
+            cfg.RNG_SEED = args.rng_seed
+        if hasattr(args, "output_dir"):
+            cfg.OUTPUT_DIR = args.output_dir
+    else:
+        cfg.merge_from_file(cfg_file)
+
+    # Create the checkpoint dir.
+    cu.make_checkpoint_dir(cfg.OUTPUT_DIR)
+
+    return cfg
+def train_cls_model(model, train_loader, val_loader, num_epochs, lr):
     """
     Huấn luyện mô hình phân loại (train + validation).
 
@@ -21,7 +57,8 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
     Returns:
         Mô hình có kết quả tốt nhất trên tập validation.
     """
-    model.to(device)
+    device = xm.xla_device()
+    model = model.to(device).to(torch.bfloat16)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.cls.parameters(), lr=lr)
 
@@ -33,9 +70,8 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
         torch.cuda.empty_cache()
         model.train()
         train_loss, correct, total = 0.0, 0, 0
-        for inputs, _, labels in train_loader:
+        for  inputs, labels, _, _ in tqdm(train_loader):
             torch.cuda.empty_cache()
-
             inputs = inputs.float()
             inputs, labels = inputs.to(device), labels.to(device)
 
@@ -43,7 +79,8 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
             outputs = model(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
-            optimizer.step()
+            xm.optimizer_step(optimizer)
+            xm.mark_step()
 
             train_loss += loss.item()
             _, predicted = torch.max(outputs, 1)
@@ -57,7 +94,7 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
         val_loss, correct, total = 0.0, 0, 0
         with torch.no_grad():
             torch.cuda.empty_cache()
-            for inputs, _, labels in val_loader:
+            for  inputs, labels, _, _ in tqdm(val_loader):
                 torch.cuda.empty_cache()
 
                 inputs = inputs.float()
@@ -77,18 +114,14 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr, device):
         # Lưu mô hình có độ chính xác validation tốt nhất
         if val_acc > best_acc:
             best_acc = val_acc
-            best_model_state = model.state_dict()
+            torch.save(model.state_dict(), "best_model.pth")
+
 
     print(f"Best Validation Accuracy: {best_acc:.4f}")
-    
-    # Trả về mô hình tốt nhất
-    if best_model_state:
-        model.load_state_dict(best_model_state)
-    return model
 
 
 
-def test_cls_model(model, test_loader, device):
+def test_cls_model(model, test_loader):
     """
     Đánh giá mô hình phân loại trên tập test với Top-1, Top-5 Accuracy và F1-score.
 
@@ -100,7 +133,8 @@ def test_cls_model(model, test_loader, device):
     Returns:
         Dictionary chứa các metric: Top-1 Acc, Top-5 Acc, F1-score.
     """
-    model.to(device)
+    device = xm.xla_device()
+    model = model.to(device).to(torch.bfloat16)
     model.eval()
 
     correct_top1, correct_top5, total = 0, 0, 0
@@ -108,7 +142,7 @@ def test_cls_model(model, test_loader, device):
 
     with torch.no_grad():
         torch.cuda.empty_cache()
-        for inputs, _, labels in tqdm(test_loader):
+        for inputs, labels, _, _ in tqdm(test_loader):
             torch.cuda.empty_cache()
             
             inputs = inputs.float()

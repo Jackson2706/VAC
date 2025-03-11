@@ -11,7 +11,7 @@ def get_lr_at_epoch(cfg, cur_epoch):
     warm up in the beginning of the training stage.
     Args:
         cfg (CfgNode): configs. Details can be found in
-            slowfast/config/defaults.py
+            slowfast/configs/defaults.py
         cur_epoch (float): the number of epoch of the current training stage.
     """
     lr = get_lr_func(cfg.SOLVER.LR_POLICY)(cfg, cur_epoch)
@@ -34,7 +34,7 @@ def lr_func_cosine(cfg, cur_epoch):
     SGDR: Stochastic Gradient Descent With Warm Restarts.
     Args:
         cfg (CfgNode): configs. Details can be found in
-            slowfast/config/defaults.py
+            slowfast/configs/defaults.py
         cur_epoch (float): the number of epoch of the current training stage.
     """
     assert cfg.SOLVER.COSINE_END_LR < cfg.SOLVER.BASE_LR
@@ -52,7 +52,7 @@ def lr_func_steps_with_relative_lrs(cfg, cur_epoch):
     steps with relative learning rate schedule.
     Args:
         cfg (CfgNode): configs. Details can be found in
-            slowfast/config/defaults.py
+            slowfast/configs/defaults.py
         cur_epoch (float): the number of epoch of the current training stage.
     """
     ind = get_step_index(cfg, cur_epoch)
@@ -64,7 +64,7 @@ def get_step_index(cfg, cur_epoch):
     Retrieves the lr step index for the given epoch.
     Args:
         cfg (CfgNode): configs. Details can be found in
-            slowfast/config/defaults.py
+            slowfast/configs/defaults.py
         cur_epoch (float): the number of epoch of the current training stage.
     """
     steps = cfg.SOLVER.STEPS + [cfg.SOLVER.MAX_EPOCH]

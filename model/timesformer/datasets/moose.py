@@ -24,7 +24,7 @@ from torchvision import transforms as pth_transforms
 import numpy as np
 from PIL import Image
 # sys.path.append('/data2/hongn/dino')
-import utils
+import utils_
 import vision_transformer as vits
 
 import torch.nn.functional as F

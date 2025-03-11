@@ -4,9 +4,9 @@ from torchvision.datasets.kinetics import Kinetics
 import torchvision.transforms as transforms
 from torchvision.transforms import InterpolationMode
 
-from config import *
+from configs import *
 from model import SapiensCLS
-from utils import *
+from utils_ import *
 
 train_dataset = Kinetics(
     root=DATASET_DIR, 

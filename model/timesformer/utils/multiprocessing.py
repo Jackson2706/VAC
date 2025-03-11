@@ -37,7 +37,7 @@ def run(
             here:
             https://pytorch.org/docs/stable/distributed.html
         cfg (CfgNode): configs. Details can be found in
-            slowfast/config/defaults.py
+            slowfast/configs/defaults.py
         output_queue (queue): can optionally be used to return values from the
             master process.
     """

@@ -1,50 +1,64 @@
 import torch
 from torch.utils.data import DataLoader
-from torchvision.datasets.kinetics import Kinetics
-import torchvision.transforms as transforms
-from torchvision.transforms import InterpolationMode
-
+import torch_xla.distributed.parallel_loader as pl
+import torch_xla.distributed.xla_multiprocessing as xmp
+import torch_xla.core.xla_model as xm
 from config import *
 from model import DINO_CLS
 from utils_ import *
+from datasets import Kinetics
+from utils_ import load_config
 
-train_dataset = Kinetics(
-    root=DATASET_DIR, 
-    frames_per_clip=FRAME_PER_CLIP, 
-    split ="train", download=True, 
-    num_workers=NUM_WORKER_LOADING, 
-    transform = transforms.Lambda(
-        lambda x: torch.stack([transforms.Resize((224, 224), interpolation=InterpolationMode.BILINEAR)(frame) for frame in x])
+def train_fn(rank, cfg, num_epochs, lr):
+    """
+    Hàm train được chạy trên mỗi TPU core
+    """
+    # Chỉ khởi tạo XLA device trong hàm này
+    device = xm.xla_device()
+    
+    # Load dataset và sampler
+    train_dataset = Kinetics(cfg=cfg, mode="train")
+    val_dataset = Kinetics(cfg=cfg, mode="val")
+
+    train_sampler = torch.utils.data.distributed.DistributedSampler(
+        train_dataset, num_replicas=xm.xrt_world_size(), rank=xm.get_ordinal(), shuffle=True
     )
-)
-
-val_dataset = Kinetics(
-    root=DATASET_DIR, 
-    frames_per_clip=FRAME_PER_CLIP, 
-    split ="val", download=True, 
-    num_workers=NUM_WORKER_LOADING, 
-    transform = transforms.Lambda(
-        lambda x: torch.stack([transforms.Resize((224, 224), interpolation=InterpolationMode.BILINEAR)(frame) for frame in x])
+    val_sampler = torch.utils.data.distributed.DistributedSampler(
+        val_dataset, num_replicas=xm.xrt_world_size(), rank=xm.get_ordinal(), shuffle=False
     )
-)
 
-test_dataset = Kinetics(
-    root=DATASET_DIR, 
-    frames_per_clip=FRAME_PER_CLIP, 
-    split ="test", download=True, 
-    num_workers=NUM_WORKER_LOADING, 
-    transform = transforms.Lambda(
-        lambda x: torch.stack([transforms.Resize((224, 224), interpolation=InterpolationMode.BILINEAR)(frame) for frame in x])
-    )
-)
-train_loader = DataLoader(train_dataset, batch_size=TRAIN_BATCH_SIZE, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=VAL_BATCH_SIZE, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=TEST_BATCH_SIZE, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=TRAIN_BATCH_SIZE, sampler=train_sampler)
+    train_loader = pl.MpDeviceLoader(train_loader, device)
+    
+    val_loader = DataLoader(val_dataset, batch_size=VAL_BATCH_SIZE, sampler=val_sampler)
+    val_loader = pl.MpDeviceLoader(val_loader, device)
 
-model = DINO_CLS(num_classes=NUM_CLS)
+    # Khởi tạo model và đưa lên TPU
+    model = DINO_CLS(num_classes=NUM_CLS).to(device)
+    
+    # Train model
+    best_model = train_cls_model(model, train_loader, val_loader, num_epochs, lr)
 
-# Huấn luyện mô hình
-best_model = train_cls_model(model, train_loader, val_loader, num_epochs=NUM_EPOCH, lr=LR, device=DEVICE)
+    # Lưu model trên TPU-0
+    if xm.get_ordinal() == 0:
+        torch.save(best_model.state_dict(), "best_model.pth")
 
-# Kiểm tra mô hình trên tập test
-test_result = test_cls_model(best_model, test_loader, device=DEVICE)
+if __name__ == "__main__":
+    cfg = load_config(cfg_file='/home/dung2/VAC/configs/default.yaml')
+
+    # Chạy train trên tất cả TPU cores
+    xmp.spawn(train_fn, args=(cfg, NUM_EPOCH, LR), nprocs=None)
+
+    # Load model đã lưu sau khi train xong
+    device = xm.xla_device()
+    model = DINO_CLS(num_classes=NUM_CLS).to(device)
+    model.load_state_dict(torch.load("best_model.pth", map_location=device))
+
+    # Load tập test
+    test_dataset = Kinetics(cfg=cfg, mode="test")
+    test_loader = DataLoader(test_dataset, batch_size=TEST_BATCH_SIZE, shuffle=False)
+    test_loader = pl.MpDeviceLoader(test_loader, device)
+
+    # Chạy test
+    test_result = test_cls_model(model, test_loader)
+    print("Test Results:", test_result)

@@ -10,9 +10,9 @@ from collections import OrderedDict
 import torch
 from fvcore.common.file_io import PathManager
 
-import timesformer.utils.distributed as du
-import timesformer.utils.logging as logging
-from timesformer.utils.c2_model_loading import get_name_convert_func
+import _utils.distributed as du
+import _utils.logging as logging
+from _utils.c2_model_loading import get_name_convert_func
 import torch.nn.functional as F
 
 logger = logging.get_logger(__name__)
@@ -141,7 +141,7 @@ def inflate_weight(state_dict_2d, state_dict_3d):
     Inflate 2D model weights in state_dict_2d to the 3D model weights in
     state_dict_3d. The details can be found in:
     Joao Carreira, and Andrew Zisserman.
-    "Quo vadis, action recognition? a new model and the kinetics datasets."
+    "Quo vadis, action recognition? a new model and the kinetics dataset."
     Args:
         state_dict_2d (OrderedDict): a dict of parameters from a 2D model.
         state_dict_3d (OrderedDict): a dict of parameters from a 3D model.

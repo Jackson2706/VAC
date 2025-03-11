@@ -45,7 +45,7 @@ class InputDataFields(object):
     original_image: image in the original input size.
     key: unique key corresponding to image.
     source_id: source of the original image.
-    filename: original filename of the dataset (without common path).
+    filename: original filename of the datasets (without common path).
     groundtruth_image_classes: image-level class labels.
     groundtruth_boxes: coordinates of the ground truth boxes in the image.
     groundtruth_classes: box-level class labels.

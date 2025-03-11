@@ -15,7 +15,7 @@ def get_norm(cfg):
     """
     Args:
         cfg (CfgNode): model building configs, details are in the comments of
-            the config file.
+            the configs file.
     Returns:
         nn.Module: the normalization layer.
     """

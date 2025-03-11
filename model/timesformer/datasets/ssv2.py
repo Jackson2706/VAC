@@ -32,7 +32,7 @@ class Ssv2(torch.utils.data.Dataset):
     def __init__(self, cfg, mode, num_retries=10):
         """
         Load Something-Something V2 data (frame paths, labels, etc. ) to a given
-        Dataset object. The dataset could be downloaded from Something-Something
+        Dataset object. The datasets could be downloaded from Something-Something
         official website (https://20bn.com/datasets/something-something).
         Please see datasets/DATASET.md for more information about the data format.
         Args:
@@ -273,6 +273,6 @@ class Ssv2(torch.utils.data.Dataset):
     def __len__(self):
         """
         Returns:
-            (int): the number of videos in the dataset.
+            (int): the number of videos in the datasets.
         """
         return len(self._path_to_videos)

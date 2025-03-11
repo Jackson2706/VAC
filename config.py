@@ -1,11 +1,10 @@
-DATASET_DIR = "./k400"
-FRAME_PER_CLIP = 3
+DATASET_DIR = "/mnt/disks/persist/k400_v2"
+FRAME_PER_CLIP = 8
 NUM_WORKER_LOADING = 2
-TRAIN_BATCH_SIZE = 1
-VAL_BATCH_SIZE = 1
+TRAIN_BATCH_SIZE = 512
+VAL_BATCH_SIZE = 128
 TEST_BATCH_SIZE = 1
 ENCODER_WEIGHT_PATH = "/home/jackson-devworks/Desktop/VAC/weights/sapiens_0.3b_epoch_1600_torchscript.pt2"
 NUM_CLS = 400
-NUM_EPOCH = 0
+NUM_EPOCH = 1
 LR = 1e-3
-DEVICE = "cuda:0"

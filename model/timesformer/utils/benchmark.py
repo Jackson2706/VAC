@@ -23,7 +23,7 @@ def benchmark_data_loading(cfg):
     Args:
 
         cfg (CfgNode): configs. Details can be found in
-            lib/config/defaults.py
+            lib/configs/defaults.py
     """
     # Set up environment.
     setup_environment()
@@ -34,8 +34,8 @@ def benchmark_data_loading(cfg):
     # Setup logging format.
     logging.setup_logging(cfg.OUTPUT_DIR)
 
-    # Print config.
-    logger.info("Benchmark data loading with config:")
+    # Print configs.
+    logger.info("Benchmark data loading with configs:")
     logger.info(pprint.pformat(cfg))
 
     timer = Timer()

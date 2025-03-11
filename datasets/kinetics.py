@@ -6,12 +6,13 @@ import torch
 import torch.utils.data
 from fvcore.common.file_io import PathManager
 
-import timesformer.utils.logging as logging
+import _utils.logging as logging
 
 from . import decoder as decoder
 from . import utils as utils
 from . import video_container as container
 from .build import DATASET_REGISTRY
+
 logger = logging.get_logger(__name__)
 
 
@@ -65,7 +66,7 @@ class Kinetics(torch.utils.data.Dataset):
             self._num_clips = 1
         elif self.mode in ["test"]:
             self._num_clips = (
-                cfg.TEST.NUM_ENSEMBLE_VIEWS * cfg.TEST.NUM_SPATIAL_CROPS
+                    cfg.TEST.NUM_ENSEMBLE_VIEWS * cfg.TEST.NUM_SPATIAL_CROPS
             )
 
         logger.info("Constructing Kinetics {}...".format(mode))
@@ -88,8 +89,8 @@ class Kinetics(torch.utils.data.Dataset):
         with PathManager.open(path_to_file, "r") as f:
             for clip_idx, path_label in enumerate(f.read().splitlines()):
                 assert (
-                    len(path_label.split(self.cfg.DATA.PATH_LABEL_SEPARATOR))
-                    == 2
+                        len(path_label.split(self.cfg.DATA.PATH_LABEL_SEPARATOR))
+                        == 2
                 )
                 path, label = path_label.split(
                     self.cfg.DATA.PATH_LABEL_SEPARATOR
@@ -102,7 +103,7 @@ class Kinetics(torch.utils.data.Dataset):
                     self._spatial_temporal_idx.append(idx)
                     self._video_meta[clip_idx * self._num_clips + idx] = {}
         assert (
-            len(self._path_to_videos) > 0
+                len(self._path_to_videos) > 0
         ), "Failed to load Kinetics split {} from {}".format(
             self._split_idx, path_to_file
         )
@@ -158,16 +159,16 @@ class Kinetics(torch.utils.data.Dataset):
                 )
         elif self.mode in ["test"]:
             temporal_sample_index = (
-                self._spatial_temporal_idx[index]
-                // self.cfg.TEST.NUM_SPATIAL_CROPS
+                    self._spatial_temporal_idx[index]
+                    // self.cfg.TEST.NUM_SPATIAL_CROPS
             )
             # spatial_sample_index is in [0, 1, 2]. Corresponding to left,
             # center, or right if width is larger than height, and top, middle,
             # or bottom if height is larger than width.
             spatial_sample_index = (
                 (
-                    self._spatial_temporal_idx[index]
-                    % self.cfg.TEST.NUM_SPATIAL_CROPS
+                        self._spatial_temporal_idx[index]
+                        % self.cfg.TEST.NUM_SPATIAL_CROPS
                 )
                 if self.cfg.TEST.NUM_SPATIAL_CROPS > 1
                 else 1
@@ -176,7 +177,7 @@ class Kinetics(torch.utils.data.Dataset):
                 [self.cfg.DATA.TEST_CROP_SIZE] * 3
                 if self.cfg.TEST.NUM_SPATIAL_CROPS > 1
                 else [self.cfg.DATA.TRAIN_JITTER_SCALES[0]] * 2
-                + [self.cfg.DATA.TEST_CROP_SIZE]
+                     + [self.cfg.DATA.TEST_CROP_SIZE]
             )
             # The testing is deterministic and no jitter should be performed.
             # min_scale, max_scale, and crop_size are expect to be the same.
@@ -192,7 +193,7 @@ class Kinetics(torch.utils.data.Dataset):
         # Try to decode and sample a clip from a video. If the video can not be
         # decoded, repeatly find a random video replacement that can be decoded.
         # logger.info("Start READING VIDEOs")
-        
+
         for i_try in range(self._num_retries):
             video_container = None
             try:
@@ -250,7 +251,6 @@ class Kinetics(torch.utils.data.Dataset):
                     index = random.randint(0, len(self._path_to_videos) - 1)
                 continue
 
-
             label = self._labels[index]
 
             # Perform color normalization.
@@ -271,18 +271,17 @@ class Kinetics(torch.utils.data.Dataset):
                 inverse_uniform_sampling=self.cfg.DATA.INV_UNIFORM_SAMPLE,
             )
 
-
             if not self.cfg.MODEL.ARCH in ['vit']:
                 frames = utils.pack_pathway_output(self.cfg, frames)
             else:
                 # Perform temporal sampling from the fast pathway.
                 frames = torch.index_select(
-                     frames,
-                     1,
-                     torch.linspace(
-                         0, frames.shape[1] - 1, self.cfg.DATA.NUM_FRAMES
+                    frames,
+                    1,
+                    torch.linspace(
+                        0, frames.shape[1] - 1, self.cfg.DATA.NUM_FRAMES
 
-                     ).long(),
+                    ).long(),
                 )
 
             return frames, label, index, {}
@@ -300,8 +299,10 @@ class Kinetics(torch.utils.data.Dataset):
         """
         return len(self._path_to_videos)
 
+
 import argparse
-from timesformer.models.moose import MOOSE_Encoder
+from model.timesformer.models.moose import MOOSE_Encoder
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', help="restore checkpoint")
 parser.add_argument('--path', help="datasets for evaluation")
@@ -309,9 +310,10 @@ parser.add_argument('--small', action='store_true', help='use small model')
 parser.add_argument('--mixed_precision', action='store_true', help='use mixed precision')
 parser.add_argument('--alternate_corr', action='store_true', help='use efficent correlation implementation')
 
-raft_args = parser.parse_args(['--model', '/data2/hongn/RAFT/models/raft-things.pth', 
-                        '--path', '/data2/hongn/RAFT/demo-frames/care'])
-        
+raft_args = parser.parse_args(['--model', '/data2/hongn/RAFT/models/raft-things.pth',
+                               '--path', '/data2/hongn/RAFT/demo-frames/care'])
+
+
 @DATASET_REGISTRY.register()
 class Kineticsflow(torch.utils.data.Dataset):
     """
@@ -362,7 +364,7 @@ class Kineticsflow(torch.utils.data.Dataset):
             self._num_clips = 1
         elif self.mode in ["test"]:
             self._num_clips = (
-                cfg.TEST.NUM_ENSEMBLE_VIEWS * cfg.TEST.NUM_SPATIAL_CROPS
+                    cfg.TEST.NUM_ENSEMBLE_VIEWS * cfg.TEST.NUM_SPATIAL_CROPS
             )
 
         logger.info("Constructing Kinetics {}...".format(mode))
@@ -385,8 +387,8 @@ class Kineticsflow(torch.utils.data.Dataset):
         with PathManager.open(path_to_file, "r") as f:
             for clip_idx, path_label in enumerate(f.read().splitlines()):
                 assert (
-                    len(path_label.split(self.cfg.DATA.PATH_LABEL_SEPARATOR))
-                    == 2
+                        len(path_label.split(self.cfg.DATA.PATH_LABEL_SEPARATOR))
+                        == 2
                 )
                 path, label = path_label.split(
                     self.cfg.DATA.PATH_LABEL_SEPARATOR
@@ -399,7 +401,7 @@ class Kineticsflow(torch.utils.data.Dataset):
                     self._spatial_temporal_idx.append(idx)
                     self._video_meta[clip_idx * self._num_clips + idx] = {}
         assert (
-            len(self._path_to_videos) > 0
+                len(self._path_to_videos) > 0
         ), "Failed to load Kinetics split {} from {}".format(
             self._split_idx, path_to_file
         )
@@ -455,16 +457,16 @@ class Kineticsflow(torch.utils.data.Dataset):
                 )
         elif self.mode in ["test"]:
             temporal_sample_index = (
-                self._spatial_temporal_idx[index]
-                // self.cfg.TEST.NUM_SPATIAL_CROPS
+                    self._spatial_temporal_idx[index]
+                    // self.cfg.TEST.NUM_SPATIAL_CROPS
             )
             # spatial_sample_index is in [0, 1, 2]. Corresponding to left,
             # center, or right if width is larger than height, and top, middle,
             # or bottom if height is larger than width.
             spatial_sample_index = (
                 (
-                    self._spatial_temporal_idx[index]
-                    % self.cfg.TEST.NUM_SPATIAL_CROPS
+                        self._spatial_temporal_idx[index]
+                        % self.cfg.TEST.NUM_SPATIAL_CROPS
                 )
                 if self.cfg.TEST.NUM_SPATIAL_CROPS > 1
                 else 1
@@ -473,7 +475,7 @@ class Kineticsflow(torch.utils.data.Dataset):
                 [self.cfg.DATA.TEST_CROP_SIZE] * 3
                 if self.cfg.TEST.NUM_SPATIAL_CROPS > 1
                 else [self.cfg.DATA.TRAIN_JITTER_SCALES[0]] * 2
-                + [self.cfg.DATA.TEST_CROP_SIZE]
+                     + [self.cfg.DATA.TEST_CROP_SIZE]
             )
             # The testing is deterministic and no jitter should be performed.
             # min_scale, max_scale, and crop_size are expect to be the same.
@@ -489,7 +491,7 @@ class Kineticsflow(torch.utils.data.Dataset):
         # Try to decode and sample a clip from a video. If the video can not be
         # decoded, repeatly find a random video replacement that can be decoded.
         # logger.info("Start READING VIDEOs")
-        
+
         for i_try in range(self._num_retries):
             video_container = None
             try:
@@ -547,7 +549,6 @@ class Kineticsflow(torch.utils.data.Dataset):
                     index = random.randint(0, len(self._path_to_videos) - 1)
                 continue
 
-
             label = self._labels[index]
 
             # Perform color normalization.
@@ -568,18 +569,17 @@ class Kineticsflow(torch.utils.data.Dataset):
                 inverse_uniform_sampling=self.cfg.DATA.INV_UNIFORM_SAMPLE,
             )
 
-
             if not self.cfg.MODEL.ARCH in ['vit']:
                 frames = utils.pack_pathway_output(self.cfg, frames)
             else:
                 # Perform temporal sampling from the fast pathway.
                 frames = torch.index_select(
-                     frames,
-                     1,
-                     torch.linspace(
-                         0, frames.shape[1] - 1, self.cfg.DATA.NUM_FRAMES
+                    frames,
+                    1,
+                    torch.linspace(
+                        0, frames.shape[1] - 1, self.cfg.DATA.NUM_FRAMES
 
-                     ).long(),
+                    ).long(),
                 )
 
                 mooose_encoder = MOOSE_Encoder(raft_args)

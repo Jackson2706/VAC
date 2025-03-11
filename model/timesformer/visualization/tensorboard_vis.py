@@ -25,7 +25,7 @@ class TensorboardWriter(object):
         """
         Args:
             cfg (CfgNode): configs. Details can be found in
-                slowfast/config/defaults.py
+                slowfast/configs/defaults.py
         """
         # class_names: list of class names.
         # cm_subset_classes: a list of class ids -- a user-specified subset.

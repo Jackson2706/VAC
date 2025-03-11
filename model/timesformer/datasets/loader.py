@@ -89,10 +89,10 @@ def rtmri75s_collate(batch):
 
 def construct_loader(cfg, split, is_precise_bn=False):
     """
-    Constructs the data loader for the given dataset.
+    Constructs the data loader for the given datasets.
     Args:
         cfg (CfgNode): configs. Details can be found in
-            slowfast/config/defaults.py
+            slowfast/configs/defaults.py
         split (str): the split of the data loader. Options include `train`,
             `val`, and `test`.
     """
@@ -113,7 +113,7 @@ def construct_loader(cfg, split, is_precise_bn=False):
         shuffle = False
         drop_last = False
 
-    # Construct the dataset
+    # Construct the datasets
     dataset = build_dataset(dataset_name, cfg, split)# if(cfg.TRAIN.rtmri75s != 'Rtmri75s') else Rtmri75s()
 
     if cfg.MULTIGRID.SHORT_CYCLE and split in ["train"] and not is_precise_bn:

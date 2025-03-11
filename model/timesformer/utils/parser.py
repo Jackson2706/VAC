@@ -20,9 +20,9 @@ def parse_args():
             devices. Options includes TCP or shared file-system for
             initialization. details can be find in
             https://pytorch.org/docs/stable/distributed.html#tcp-initialization
-        cfg (str): path to the config file.
+        cfg (str): path to the configs file.
         opts (argument): provide addtional options from the command line, it
-            overwrites the config loaded from file.
+            overwrites the configs loaded from file.
     """
     parser = argparse.ArgumentParser(
         description="Provide SlowFast video training and testing pipeline."
@@ -48,13 +48,13 @@ def parse_args():
     parser.add_argument(
         "--cfg",
         dest="cfg_file",
-        help="Path to the config file",
+        help="Path to the configs file",
         default="configs/Kinetics/SLOWFAST_4x16_R50.yaml",
         type=str,
     )
     parser.add_argument(
         "opts",
-        help="See slowfast/config/defaults.py for all options",
+        help="See slowfast/configs/defaults.py for all options",
         default=None,
         nargs=argparse.REMAINDER,
     )
@@ -73,10 +73,10 @@ def load_config(args = None, cfg_file = "/data2/hongn/TimeSformer/configs/Rtmri7
     # Setup cfg.
     cfg = get_cfg()
     if(args is not None):
-        # Load config from cfg
+        # Load configs from cfg
         if args.cfg_file is not None:
             cfg.merge_from_file(args.cfg_file)
-        # Load config from command line, overwrite config from opts.
+        # Load configs from command line, overwrite configs from opts.
         if args.opts is not None:
             cfg.merge_from_list(args.opts)
 

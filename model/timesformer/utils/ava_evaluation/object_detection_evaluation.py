@@ -15,7 +15,7 @@
 """object_detection_evaluation module.
 
 ObjectDetectionEvaluation is a class which manages ground truth information of a
-object detection dataset, and computes frequently used detection metrics such as
+object detection datasets, and computes frequently used detection metrics such as
 Precision, Recall, CorLoc of the provided detection results.
 It supports the following operations:
 1) Add ground truth information of images sequentially.

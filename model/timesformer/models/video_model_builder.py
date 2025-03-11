@@ -165,7 +165,7 @@ class SlowFast(nn.Module):
             arguments.
         Args:
             cfg (CfgNode): model building configs, details are in the
-                comments of the config file.
+                comments of the configs file.
         """
         super(SlowFast, self).__init__()
         self.norm_module = get_norm(cfg)
@@ -184,7 +184,7 @@ class SlowFast(nn.Module):
             second pathway is the Fast pathway.
         Args:
             cfg (CfgNode): model building configs, details are in the
-                comments of the config file.
+                comments of the configs file.
         """
         assert cfg.MODEL.ARCH in _POOL1.keys()
         pool_size = _POOL1[cfg.MODEL.ARCH]
@@ -443,7 +443,7 @@ class ResNet(nn.Module):
 
         Args:
             cfg (CfgNode): model building configs, details are in the
-                comments of the config file.
+                comments of the configs file.
         """
         super(ResNet, self).__init__()
         self.norm_module = get_norm(cfg)
@@ -460,7 +460,7 @@ class ResNet(nn.Module):
 
         Args:
             cfg (CfgNode): model building configs, details are in the
-                comments of the config file.
+                comments of the configs file.
         """
         assert cfg.MODEL.ARCH in _POOL1.keys()
         pool_size = _POOL1[cfg.MODEL.ARCH]
@@ -637,7 +637,7 @@ class X3D(nn.Module):
 
         Args:
             cfg (CfgNode): model building configs, details are in the
-                comments of the config file.
+                comments of the configs file.
         """
         super(X3D, self).__init__()
         self.norm_module = get_norm(cfg)
@@ -695,7 +695,7 @@ class X3D(nn.Module):
 
         Args:
             cfg (CfgNode): model building configs, details are in the
-                comments of the config file.
+                comments of the configs file.
         """
         assert cfg.MODEL.ARCH in _POOL1.keys()
         assert cfg.RESNET.DEPTH in _MODEL_STAGE_DEPTH.keys()

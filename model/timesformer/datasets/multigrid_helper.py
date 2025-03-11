@@ -19,7 +19,7 @@ class ShortCycleBatchSampler(Sampler):
         if not isinstance(sampler, Sampler):
             raise ValueError(
                 "sampler should be an instance of "
-                "torch.utils.data.Sampler, but got sampler={}".format(sampler)
+                "torch.utils_.data.Sampler, but got sampler={}".format(sampler)
             )
         if (
             not isinstance(batch_size, _int_classes)

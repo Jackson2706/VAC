@@ -7,13 +7,18 @@ class DINO_CLS(nn.Module):
 
         self.encoder = torch.hub.load('facebookresearch/dino:main', backbone_name)
         self.cls = nn.Sequential(
-            nn.Linear(384, num_classes)  # Linear layer for classification
+            nn.Linear(3072, 1024),
+            nn.ReLU(),
+            nn.Linear(1024,512),
+            nn.ReLU(),
+            nn.Linear(512, num_classes)
         )
         
     def forward(self, x):
-        B, T, C, H, W = x.shape
+        B, C, T, H, W = x.shape
         x = x.view(B*T, C, H, W)
         x = self.encoder(x)
+        x = x.view(B, -1)
         x = self.cls(x)
         return x
 

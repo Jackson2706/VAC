@@ -4,7 +4,7 @@ from torchvision.datasets.kinetics import Kinetics
 import torchvision.transforms as transforms
 from torchvision.transforms import InterpolationMode
 
-from config import *
+from configs import *
 from model import *
 from utils_ import *
 

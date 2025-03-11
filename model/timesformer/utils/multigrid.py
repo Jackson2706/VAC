@@ -20,7 +20,7 @@ class MultigridSchedule(object):
         Args:
             cfg (configs): configs that contains training and multigrid specific
                 hyperparameters. Details can be seen in
-                slowfast/config/defaults.py.
+                slowfast/configs/defaults.py.
         Returns:
             cfg (configs): the updated cfg.
         """
@@ -66,7 +66,7 @@ class MultigridSchedule(object):
         Args:
             cfg (configs): configs that contains training and multigrid specific
                 hyperparameters. Details can be seen in
-                slowfast/config/defaults.py.
+                slowfast/configs/defaults.py.
             cur_epoch (int): current epoch index.
         Returns:
             cfg (configs): the updated cfg.
@@ -125,7 +125,7 @@ class MultigridSchedule(object):
         Args:
             cfg (configs): configs that contains training and multigrid specific
                 hyperparameters. Details can be seen in
-                slowfast/config/defaults.py.
+                slowfast/configs/defaults.py.
         Returns:
             schedule (list): Specifies a list long cycle base shapes and their
                 corresponding training epochs.
@@ -226,7 +226,7 @@ def get_current_long_cycle_shape(schedule, epoch):
     Args:
         schedule (configs): configs that contains training and multigrid specific
             hyperparameters. Details can be seen in
-            slowfast/config/defaults.py.
+            slowfast/configs/defaults.py.
         cur_epoch (int): current epoch index.
     Returns:
         shapes (list): A list describing the base shape in a long cycle:

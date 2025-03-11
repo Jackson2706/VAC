@@ -444,7 +444,7 @@ from model.timesformer.models.moose import MOOSE_Encoder, CustomAttentionWithRes
 # from 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', help="restore checkpoint")
-parser.add_argument('--path', help="dataset for evaluation")
+parser.add_argument('--path', help="datasets for evaluation")
 parser.add_argument('--small', action='store_true', help='use small model')
 parser.add_argument('--mixed_precision', action='store_true', help='use mixed precision')
 parser.add_argument('--alternate_corr', action='store_true', help='use efficent correlation implementation')

@@ -19,7 +19,7 @@ def build_model(cfg, gpu_id=None):
     Builds the video model.
     Args:
         cfg (configs): configs that contains the hyper-parameters to build the
-        backbone. Details can be seen in slowfast/config/defaults.py.
+        backbone. Details can be seen in slowfast/configs/defaults.py.
         gpu_id (Optional[int]): specify the gpu index to build model.
     """
     if torch.cuda.is_available():

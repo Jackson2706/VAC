@@ -344,6 +344,6 @@ class Rtmri75s(torch.utils.data.Dataset):
     def __len__(self):
         """
         Returns:
-            (int): the number of videos in the dataset.
+            (int): the number of videos in the datasets.
         """
         return len(self._path_to_videos)

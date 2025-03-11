@@ -770,7 +770,7 @@ _C.DEMO.COMMON_CLASS_THRES = 0.7
 # used if `_C.DEMO.COMMON_CLASS_NAMES` is empty.
 _C.DEMO.UNCOMMON_CLASS_THRES = 0.3
 # This is chosen based on distribution of examples in
-# each classes in AVA datasets.
+# each classes in AVA dataset.
 _C.DEMO.COMMON_CLASS_NAMES = [
     "watch (a person)",
     "talk to (e.g., self, a person, a group)",

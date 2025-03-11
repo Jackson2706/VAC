@@ -307,7 +307,7 @@ def process_cv2_inputs(frames, cfg):
     Args:
         frames (list of array): list of input images (correspond to one clip) in range [0, 255].
         cfg (CfgNode): configs. Details can be found in
-            slowfast/config/defaults.py
+            slowfast/configs/defaults.py
     """
     inputs = torch.from_numpy(np.array(frames)).float() / 255
     inputs = tensor_normalize(inputs, cfg.DATA.MEAN, cfg.DATA.STD)

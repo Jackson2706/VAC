@@ -1,9 +1,10 @@
-import torch
-from model import MOOSE
+from datasets import Kinetics
+from  utils_ import  load_config
 
+cfg = load_config(cfg_file='/home/dung2/VAC/configs/default.yaml')
+dataset = Kinetics(
+    cfg=cfg,
+    mode="val"
+)
 
-model = MOOSE(None)
-model_infos = torch.load("/home/jackson-devworks/Desktop/VAC/weights/checkpoint_epoch_00030.pyth", weights_only=False)
-model.load_state_dict(model_infos['model_state'])
-
-print(model)
+print(dataset[0][0].shape)
