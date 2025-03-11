@@ -58,7 +58,7 @@ def train_cls_model(model, train_loader, val_loader, num_epochs, lr):
         Mô hình có kết quả tốt nhất trên tập validation.
     """
     device = xm.xla_device()
-    model = model.to(device).to(torch.bfloat16)
+    model = model.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.cls.parameters(), lr=lr)
 
@@ -134,7 +134,7 @@ def test_cls_model(model, test_loader):
         Dictionary chứa các metric: Top-1 Acc, Top-5 Acc, F1-score.
     """
     device = xm.xla_device()
-    model = model.to(device).to(torch.bfloat16)
+    model = model.to(device)
     model.eval()
 
     correct_top1, correct_top5, total = 0, 0, 0
