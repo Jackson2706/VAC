@@ -136,7 +136,7 @@ def test_cls_model(model, test_loader):
     device = xm.xla_device()
     model = model.to(device)
     model.eval()
-
+       
     correct_top1, correct_top5, total = 0, 0, 0
     all_preds, all_labels = [], []
 
